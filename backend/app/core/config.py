@@ -19,8 +19,15 @@ class Settings(BaseSettings):
     # FAL AI Settings
     FAL_KEY: str = os.getenv("FAL_KEY", "")
     
+    # OpenAI Settings
+    OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
+    
     # Output Settings
     OUTPUT_DIR: str = "generated_videos"
+    AUDIO_OUTPUT_DIR: str = "generated_audio"
+    
+    # CSV Settings
+    CSV_PATH: str = "data/audio_generations.csv"
     
     class Config:
         case_sensitive = True

@@ -7,6 +7,7 @@ export function VideoGallery() {
   const [videos, setVideos] = useState<Video[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
 
   useEffect(() => {
     loadVideos();
@@ -25,6 +26,51 @@ export function VideoGallery() {
       setIsLoading(false);
     }
   };
+
+  // Function to get embedded video URL
+  const getEmbedUrl = (video: Video) => {
+    if (video.isShort) {
+      return `https://www.youtube.com/embed/${video.id}?autoplay=1&rel=0&modestbranding=1`;
+    }
+    return video.url;
+  };
+
+  // Video Modal Component
+  const VideoModal = ({ video, onClose }: { video: Video; onClose: () => void }) => (
+    <div className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4">
+      <div className="relative w-full max-w-4xl mx-auto">
+        {/* Close button */}
+        <button
+          onClick={onClose}
+          className="absolute -top-10 right-0 text-white hover:text-gray-300"
+        >
+          <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        {/* Video container with aspect ratio */}
+        <div className={`relative w-full ${video.isShort ? 'max-w-[400px] mx-auto' : ''}`}>
+          <div className={`relative ${video.isShort ? 'pb-[177.77%]' : 'pb-[56.25%]'}`}>
+            <iframe
+              className="absolute inset-0 w-full h-full rounded-lg"
+              src={getEmbedUrl(video)}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+        </div>
+
+        {/* Video info */}
+        <div className="mt-4 text-white">
+          <h3 className="text-xl font-semibold">{video.title}</h3>
+          <p className="text-sm text-gray-300 mt-1">
+            {new Date(video.createdAt).toLocaleDateString()}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
 
   if (isLoading) {
     return (
@@ -93,10 +139,8 @@ export function VideoGallery() {
                   </span>
                 )}
               </div>
-              <a
-                href={video.url}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={() => setSelectedVideo(video)}
                 className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity"
               >
                 <svg
@@ -106,7 +150,7 @@ export function VideoGallery() {
                 >
                   <path d="M8 5v14l11-7z" />
                 </svg>
-              </a>
+              </button>
             </div>
             
             {/* Video Info */}
@@ -116,14 +160,12 @@ export function VideoGallery() {
               </h3>
               <div className="flex justify-between items-center text-sm text-gray-600 dark:text-gray-400">
                 <span>{new Date(video.createdAt).toLocaleDateString()}</span>
-                <a
-                  href={video.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  onClick={() => setSelectedVideo(video)}
                   className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
                 >
-                  Watch on YouTube →
-                </a>
+                  Play Video →
+                </button>
               </div>
             </div>
           </div>
@@ -152,6 +194,14 @@ export function VideoGallery() {
             Generate your first video to see it here.
           </p>
         </div>
+      )}
+
+      {/* Video Modal */}
+      {selectedVideo && (
+        <VideoModal
+          video={selectedVideo}
+          onClose={() => setSelectedVideo(null)}
+        />
       )}
     </div>
   );
