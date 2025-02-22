@@ -41,7 +41,14 @@ export const videoService = {
         createdAt: '2024-02-22',
         isShort: true
       },
-      // Add more sample videos here
+      {
+        id: 'hJg9zyqJG6c',
+        title: 'AI Generated Video',
+        thumbnail: `https://i.ytimg.com/vi/hJg9zyqJG6c/maxresdefault.jpg`,
+        url: `https://www.youtube.com/watch?v=hJg9zyqJG6c`,
+        createdAt: '2024-02-23',
+        isShort: false
+      }
     ];
   },
 

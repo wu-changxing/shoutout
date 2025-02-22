@@ -2,6 +2,9 @@
 
 import { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
+import { FiUploadCloud } from 'react-icons/fi';
+import { AiOutlineFilePdf } from 'react-icons/ai';
+import { IoCheckmarkCircle } from 'react-icons/io5';
 
 interface FileUploadProps {
   onFileSelect: (file: File) => void;
@@ -29,36 +32,62 @@ export function FileUpload({ onFileSelect }: FileUploadProps) {
   return (
     <div
       {...getRootProps()}
-      className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors cursor-pointer
-        ${isDragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-gray-400'}
-        ${file ? 'bg-green-50 border-green-500' : ''}`}
+      className={`
+        relative overflow-hidden border-2 border-dashed rounded-xl p-8 text-center transition-all duration-300
+        ${isDragActive 
+          ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-500/10' 
+          : 'border-gray-300 hover:border-gray-400 dark:border-gray-700 dark:hover:border-gray-600'}
+        ${file 
+          ? 'bg-green-50/50 border-green-500 dark:bg-green-500/10 dark:border-green-500/50' 
+          : ''}
+        group cursor-pointer
+      `}
     >
+      {/* Animated background gradient */}
+      <div className={`
+        absolute inset-0 bg-gradient-to-r from-transparent via-blue-500/10 to-transparent
+        -translate-x-full group-hover:translate-x-full transition-transform duration-1000
+        ${isDragActive ? 'animate-shimmer' : ''}
+      `} />
+
       <input {...getInputProps()} />
-      <svg
-        className={`mx-auto h-12 w-12 ${file ? 'text-green-500' : 'text-gray-400'}`}
-        stroke="currentColor"
-        fill="none"
-        viewBox="0 0 48 48"
-        aria-hidden="true"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M8 14v20c0 4.418 3.582 8 8 8h16c4.418 0 8-3.582 8-8V14M8 14c0-4.418 3.582-8 8-8h16c4.418 0 8 3.582 8 8M8 14h32"
-        />
-      </svg>
-      <div className="mt-4">
+      
+      <div className="relative">
         {file ? (
-          <p className="text-sm text-green-600">
-            Selected file: {file.name}
-          </p>
+          <div className="flex flex-col items-center">
+            <div className="relative">
+              <AiOutlineFilePdf className="w-16 h-16 text-green-500 dark:text-green-400" />
+              <IoCheckmarkCircle className="absolute -bottom-2 -right-2 w-8 h-8 text-green-500 dark:text-green-400" />
+            </div>
+            <p className="mt-4 text-sm font-medium text-green-600 dark:text-green-400">
+              {file.name}
+            </p>
+            <p className="mt-1 text-xs text-green-500 dark:text-green-400">
+              Ready to process
+            </p>
+          </div>
         ) : (
-          <p className="text-sm text-gray-600">
-            {isDragActive
-              ? "Drop your PDF here..."
-              : "Drag and drop your PDF file here, or click to browse"}
-          </p>
+          <div className="flex flex-col items-center">
+            <FiUploadCloud className={`
+              w-16 h-16 transition-colors duration-300
+              ${isDragActive 
+                ? 'text-blue-500 dark:text-blue-400' 
+                : 'text-gray-400 dark:text-gray-500 group-hover:text-gray-500'}
+            `} />
+            <p className={`
+              mt-4 text-sm font-medium transition-colors duration-300
+              ${isDragActive 
+                ? 'text-blue-500 dark:text-blue-400' 
+                : 'text-gray-600 dark:text-gray-400'}
+            `}>
+              {isDragActive
+                ? "Drop your PDF here..."
+                : "Drag and drop your PDF file here"}
+            </p>
+            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+              or click to browse
+            </p>
+          </div>
         )}
       </div>
     </div>
