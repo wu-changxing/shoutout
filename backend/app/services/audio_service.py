@@ -23,7 +23,7 @@ class TranscriptResponse(BaseModel):
 class AudioService:
     def __init__(self):
         self.client = instructor.patch(OpenAI(api_key=settings.OPENAI_API_KEY))
-        self.csv_manager = CSVManager(settings.CSV_PATH)
+        self.csv_manager = CSVManager(settings.CSV_PATH, ["FIX ME"])
         self.output_dir = Path(settings.AUDIO_OUTPUT_DIR)
         os.makedirs(self.output_dir, exist_ok=True)
 

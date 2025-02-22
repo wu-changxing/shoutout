@@ -22,12 +22,19 @@ class Settings(BaseSettings):
     # OpenAI Settings
     OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
     
+    # Google GenAI Settings
+    GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
+    
     # Output Settings
     OUTPUT_DIR: str = "generated_videos"
     AUDIO_OUTPUT_DIR: str = "generated_audio"
     
     # CSV Settings
     CSV_PATH: str = "data/audio_generations.csv"
+    SUMMARIES_CSV_PATH: str = "data/summaries.csv"
+    
+    # Debug Settings
+    DEBUG: bool = True
     
     class Config:
         case_sensitive = True
