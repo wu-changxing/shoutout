@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.routes import video_router, audio_router, summary_router
+from app.api.routes import video_router, audio_router, summary_router, youtube_router
 from app.core.config import settings
 
 app = FastAPI(
@@ -22,3 +22,4 @@ app.add_middleware(
 app.include_router(video_router.router, prefix="/api/v1", tags=["videos"])
 app.include_router(audio_router.router, prefix="/api/v1/audio", tags=["audio"]) 
 app.include_router(summary_router.router, prefix="/api/v1/summaries", tags=["summaries"])
+app.include_router(youtube_router.router, prefix="/api/v1/youtube", tags=["youtube"])
