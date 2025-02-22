@@ -36,13 +36,13 @@ def generate_video():
         result = fal_client.subscribe(
             "fal-ai/minimax/video-01-live",  # correct endpoint for video generation
             arguments={
-                "prompt": "A serene lake surrounded by mountains at sunset, cinematic, 8k, detailed",
-                "negative_prompt": "blurry, low quality, distorted",
+                "prompt": "A hilarious political debate between a wise owl wearing glasses and a energetic squirrel in a suit, vertical video format, TikTok style, Pixar-like animation quality, vibrant colors, split screen debate setup, animated meme reactions floating around, fact-check emojis popping up, viral social media aesthetic, comic speech bubbles, funny facial expressions, the owl looks scholarly and serious while the squirrel is hyperactive and dramatic, trending hashtags appearing, kawaii style effects, professional studio lighting, 4K quality",
+                "negative_prompt": "blurry, low quality, distorted, realistic humans, scary, aggressive, dark mood, unprofessional lighting, horizontal format, serious tone, realistic animals",
                 "num_frames": 24,
-                "fps": 8,
-                "width": 1024,
-                "height": 576,
-                "guidance_scale": 7.5,
+                "fps": 12,  # Increased for smoother motion
+                "width": 608,   # Vertical format for TikTok (9:16 ratio)
+                "height": 1080,
+                "guidance_scale": 8.5,  # Increased for stronger prompt adherence
                 "num_inference_steps": 50
             },
             with_logs=True,
@@ -55,7 +55,7 @@ def generate_video():
         if isinstance(result, dict) and 'video' in result and isinstance(result['video'], dict):
             video_info = result['video']
             if 'url' in video_info:
-                filename = os.path.join(output_dir, video_info.get('file_name', 'output.mp4'))
+                filename = os.path.join(output_dir, "funny_debate.mp4")
                 download_video(video_info['url'], filename)
                 print(f"\nVideo has been downloaded to: {filename}")
             else:
