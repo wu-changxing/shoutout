@@ -1,6 +1,6 @@
 import pandas as pd
 import os
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Union
 
 from app.core.config import settings
 
@@ -21,7 +21,7 @@ class CSVManager:
         """Read all data from CSV"""
         return pd.read_csv(self.csv_path)
 
-    def append_rows(self, data: Dict[str, Any]|List[Dict[str, Any]]) -> int:
+    def append_rows(self, data: Union[Dict[str, Any], List[Dict[str, Any]]]) -> int:
         """Append a new row to CSV and return its ID"""
         if settings.DEBUG: print(f"Appending {len(data)} rows to CSV...")
         
