@@ -39,28 +39,28 @@ class AudioService:
 
     async def generate_script(self, input_text: str) -> TranscriptResponse:
         """Generate a TikTok-optimized script from input text"""
+        
+        if settings.DEBUG: print(f"** Generating script for input text...")
+        
         response = self.client.chat.completions.create(
             model="gpt-4",
             response_model=TranscriptResponse,
             messages=[
                 {
-                    "role": "system",
-                    "content": dedent("""
-                        You are a specialized TikTok Audio Generator AI. Your role is to transform text into viral-worthy audio clips. Your objectives are:
-                        1. Analyze input text and identify highly engaging segments
-                        2. Create short, punchy soundbites (7-15 seconds)
-                        3. For each potential audio clip, provide:
-                            - soundbite: The exact text to be converted to audio
-                            - duration: Recommended length in seconds
-                            - tone: Speaking style and emotional delivery
-                            - music: Suggested background music genre/mood
-                            - hook_elements: What makes it catchy and viral-worthy
-                            - timing_markers: Where key phrases should be emphasized
-                        4. Additional elements to specify:
-                            - trending_potential: How well it aligns with current TikTok trends
-                            - target_audience: Primary demographic appeal
-                            - hashtag_suggestions: Relevant TikTok hashtags
-                    """)
+                  "role": "system",
+                "content": "You are a specialized TikTok Audio Script Generator AI. Your purpose is to transform text into engaging, viral-worthy audio scripts optimized for TikTok's format. You must follow a specific format and always maintain high standards for creating attention-grabbing, shareable content."
+                },
+                {
+                  "role": "system",
+                "content": "Core Requirements:\n1. Always identify hooks that will grab attention in the first 3 seconds\n2. Create an amazing script for each input\n3. Each script must be at least 7-15 seconds long\n4. Follow the specified JSON output format exactly\n5. Focus on emotional impact and shareability"
+                },
+                  {
+                    "role": "user",
+                  "content": "Please provide TikTok-optimized audio scripts following this format for any input text I provide."
+                },
+                {
+                  "role": "assistant",
+                  "content": "I understand. For each text input I will generate an optimized and engaging script to be read out loud verbatim."
                 },
                 {
                     "role": "user",
@@ -68,26 +68,37 @@ class AudioService:
                 }
             ]
         )
+        
+        if settings.DEBUG: print(f"** Finished generating script!")
         return response
 
     async def generate_audio(self, script: TranscriptResponse, voice_type: str = "nova") -> str:
         """Generate audio from the script using OpenAI's text-to-speech"""
-        audio_file = self.output_dir / f"speech_{hash(script.soundbite)}.mp3"
         
-        response = await self.client.audio.speech.create(
+        if settings.DEBUG: print(f"** Generating audio for script...")
+        audio_file = self.output_dir / f"speech_{hash(script.soundbite)}.mp3"
+        if settings.DEBUG: print(f"** Audio file path: {audio_file}")
+        
+        if settings.DEBUG: print(f"** Generating audio...")
+        response = self.client.audio.speech.create(
             model="tts-1",
             voice=voice_type,
             input=script.soundbite
         )
+        if settings.DEBUG: print(f"** Finished generating audio!")
 
         # Save the audio file
+        if settings.DEBUG: print(f"** Saving audio file...")
         with open(audio_file, "wb") as f:
             f.write(response.content)
+        if settings.DEBUG: print(f"** Finished saving audio file!")
 
         return str(audio_file)
 
     async def process_text(self, input_text: str, voice_type: str = "nova") -> dict:
         """Process text through script generation and audio generation"""
+        
+        if settings.DEBUG: print(f"** Processing text...")
         # Add to CSV as pending
         row_id = self.csv_manager.append_rows({
             "input_text": input_text,
@@ -106,7 +117,9 @@ class AudioService:
             })
 
             # Generate audio
+            if settings.DEBUG: print(f"** Generating audio...")
             audio_path = await self.generate_audio(script, voice_type)
+            if settings.DEBUG: print(f"** Finished generating audio!")
             
             # Update CSV with audio path
             self.csv_manager.update_row(row_id, {
@@ -122,6 +135,7 @@ class AudioService:
             }
 
         except Exception as e:
+            if settings.DEBUG: print(f"** Error processing text: {str(e)}")
             # Update CSV with error status
             self.csv_manager.update_row(row_id, {
                 "status": f"error: {str(e)}"

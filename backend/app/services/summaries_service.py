@@ -114,6 +114,7 @@ class SummariesService:
               3. Ensure to include the name of the politician when summarising their opinion.
               4. Ensure summaries a maximum for 300 words.
               5. Do not focus too much on that the 'Speaker' says, but more on the senators, MPs, and other politicians.
+              6. Ensure to include the party the politican represents.
             
             If the chunk contains other information that is not relevant to a politican's perspective or opinion, then leave the summary list empty, and fill the is_valuable with NONE. 
       
