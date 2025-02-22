@@ -23,13 +23,23 @@ class TranscriptResponse(BaseModel):
 class AudioService:
     def __init__(self):
         self.client = instructor.patch(OpenAI(api_key=settings.OPENAI_API_KEY))
-        self.csv_manager = CSVManager(settings.CSV_PATH, ["FIX ME"])
+        
+        self.audio_csv_headers = [
+          "id",
+          "input_text",
+          "status",
+          "voice_type",
+          "script",
+          "status",
+          "audio_path",  
+        ]
+        self.csv_manager = CSVManager(settings.AUDIO_CSV_PATH, self.audio_csv_headers)
         self.output_dir = Path(settings.AUDIO_OUTPUT_DIR)
         os.makedirs(self.output_dir, exist_ok=True)
 
     async def generate_script(self, input_text: str) -> TranscriptResponse:
         """Generate a TikTok-optimized script from input text"""
-        response = await self.client.chat.completions.create(
+        response = self.client.chat.completions.create(
             model="gpt-4",
             response_model=TranscriptResponse,
             messages=[
@@ -79,7 +89,7 @@ class AudioService:
     async def process_text(self, input_text: str, voice_type: str = "nova") -> dict:
         """Process text through script generation and audio generation"""
         # Add to CSV as pending
-        row_id = self.csv_manager.append_row({
+        row_id = self.csv_manager.append_rows({
             "input_text": input_text,
             "status": "pending",
             "voice_type": voice_type

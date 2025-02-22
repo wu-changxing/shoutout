@@ -61,7 +61,7 @@ class CSVManager:
         # Update the row
         for key, value in data.items():
             if key in df.columns:
-                df.loc[df['id'] == row_id, key] = value
+                df.loc[df['id'] == int(row_id), key] = value
         
         df.to_csv(self.csv_path, index=False)
         return True

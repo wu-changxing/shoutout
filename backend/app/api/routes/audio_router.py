@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, BackgroundTasks
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, Dict
 from app.services.audio_service import audio_service
 from fastapi.responses import FileResponse
 import os
@@ -17,7 +17,7 @@ class AudioGenerationResponse(BaseModel):
     audio_path: Optional[str] = None
     script: Optional[dict] = None
 
-@router.post("/generate/", response_model=AudioGenerationResponse)
+@router.post("/generate/audio", response_model=AudioGenerationResponse)
 async def generate_audio(request: AudioGenerationRequest, background_tasks: BackgroundTasks):
     """
     Generate audio from input text.

@@ -30,7 +30,7 @@ class Settings(BaseSettings):
     AUDIO_OUTPUT_DIR: str = "generated_audio"
     
     # CSV Settings
-    CSV_PATH: str = "data/audio_generations.csv"
+    AUDIO_CSV_PATH: str = "data/audio_generations.csv"
     SUMMARIES_CSV_PATH: str = "data/summaries.csv"
     
     # Debug Settings
