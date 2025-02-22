@@ -52,12 +52,18 @@ def generate_video():
         print("\nVideo generation completed!")
         
         # Download the generated video
-        if 'video' in result:
-            filename = os.path.join(output_dir, "output.mp4")
-            download_video(result['video'], filename)
-            print(f"\nVideo has been downloaded to: {filename}")
+        if isinstance(result, dict) and 'video' in result and isinstance(result['video'], dict):
+            video_info = result['video']
+            if 'url' in video_info:
+                filename = os.path.join(output_dir, video_info.get('file_name', 'output.mp4'))
+                download_video(video_info['url'], filename)
+                print(f"\nVideo has been downloaded to: {filename}")
+            else:
+                print("No video URL found in the video info")
+                print("Video info:", video_info)
         else:
-            print("No video was generated in the response")
+            print("No video information found in the response")
+            print("Response:", result)
             
     except Exception as e:
         print(f"An error occurred: {str(e)}")
