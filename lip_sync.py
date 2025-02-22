@@ -25,6 +25,8 @@ def download_video(url, filename):
         print(f"Downloaded: {filename}")
     else:
         print(f"Failed to download {filename}")
+        print(f"Status code: {response.status_code}")
+        print(f"Response: {response.text}")
 
 def on_queue_update(update):
     """Handle queue updates and print progress logs"""
@@ -35,7 +37,7 @@ def on_queue_update(update):
 def generate_lip_sync(video_path="input_files/input.mp4", audio_path="input_files/input.wav"):
     """Generate a lip-synced video from input video and audio files"""
     # Create output directory if it doesn't exist
-    output_dir = "output_videos"
+    output_dir = "generated_videos"
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     
@@ -74,14 +76,16 @@ def generate_lip_sync(video_path="input_files/input.mp4", audio_path="input_file
         
         print("\nLip-sync completed!")
         
-        # Download the generated video
-        if isinstance(result, dict) and 'url' in result:
+        # Extract video URL from the nested response structure
+        if isinstance(result, dict) and 'video' in result and isinstance(result['video'], dict) and 'url' in result['video']:
+            video_url = result['video']['url']
             filename = os.path.join(output_dir, "lip_synced_output.mp4")
-            download_video(result['url'], filename)
+            print(f"Downloading video from: {video_url}")
+            download_video(video_url, filename)
             print(f"\nLip-synced video has been downloaded to: {filename}")
         else:
-            print("No video URL found in the response")
-            print("Response:", result)
+            print("Could not find video URL in the response")
+            print("Response structure:", result)
             
     except Exception as e:
         print(f"An error occurred: {str(e)}")
