@@ -1,150 +1,158 @@
 'use client';
 
 import { useState } from 'react';
+import { ProcessSteps, type ProcessStep } from '@/components/ProcessSteps';
 import { FileUpload } from '@/components/FileUpload';
 import { YouTubeSettings } from '@/components/YouTubeSettings';
 import { VideoGallery } from '@/components/VideoGallery';
-import { videoService } from '@/services/videoService';
+import { FiUpload, FiYoutube, FiSettings, FiTrendingUp } from 'react-icons/fi';
+import { BsRobot, BsLightning } from 'react-icons/bs';
 
 export default function Home() {
-  const [file, setFile] = useState<File | null>(null);
-  const [youtubeSettings, setYoutubeSettings] = useState({
-    channelName: '',
-    titleFormat: '{title} - AI Summary'
-  });
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [generatedVideoUrl, setGeneratedVideoUrl] = useState<string | null>(null);
+  const [currentStep, setCurrentStep] = useState('script');
+  const [steps, setSteps] = useState<ProcessStep[]>([
+    {
+      id: 'script',
+      title: 'Generate Script',
+      description: 'Upload your PDF document to generate a video script',
+      status: 'waiting'
+    },
+    {
+      id: 'audio',
+      title: 'Generate Audio',
+      description: 'Converting script to natural speech using AI',
+      status: 'waiting'
+    },
+    {
+      id: 'video',
+      title: 'Select Video',
+      description: 'Choose a video template for your content',
+      status: 'waiting'
+    },
+    {
+      id: 'lipsync',
+      title: 'Lip Sync',
+      description: 'Generating lip-synced video with AI',
+      status: 'waiting'
+    },
+    {
+      id: 'youtube',
+      title: 'Publish',
+      description: 'Upload your video to YouTube',
+      status: 'waiting'
+    }
+  ]);
 
-  const handleFileSelect = (selectedFile: File) => {
-    setFile(selectedFile);
-    setGeneratedVideoUrl(null);
+  const handleFileSelect = async (file: File) => {
+    // Update script step status
+    setSteps(steps.map(step => 
+      step.id === 'script' 
+        ? { ...step, status: 'processing' }
+        : step
+    ));
+
+    // Simulate processing
+    setTimeout(() => {
+      setSteps(steps.map(step => 
+        step.id === 'script' 
+          ? { ...step, status: 'completed' }
+          : step.id === 'audio'
+          ? { ...step, status: 'processing' }
+          : step
+      ));
+      setCurrentStep('audio');
+    }, 2000);
   };
 
-  const handleSettingsChange = (settings: typeof youtubeSettings) => {
-    setYoutubeSettings(settings);
-  };
-
-  const handleGenerate = async () => {
-    if (!file || !youtubeSettings.channelName) {
-      alert('Please select a PDF file and enter your YouTube channel name');
-      return;
-    }
-
-    setIsGenerating(true);
-    try {
-      const filePath = await videoService.generateVideo(
-        file,
-        youtubeSettings.channelName,
-        youtubeSettings.titleFormat
-      );
-
-      // Download the generated video
-      const videoBlob = await videoService.downloadVideo(filePath);
-      const videoUrl = URL.createObjectURL(videoBlob);
-      
-      setGeneratedVideoUrl(videoUrl);
-      alert('Video generated successfully!');
-    } catch (error) {
-      console.error('Error generating video:', error);
-      alert('Error generating video. Please try again.');
-    } finally {
-      setIsGenerating(false);
-    }
+  const handleSettingsChange = (settings: { channelName: string; titleFormat: string }) => {
+    // Handle YouTube settings
+    console.log('YouTube settings:', settings);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <main className="min-h-screen bg-gradient-to-b from-background to-background/80">
       {/* Header */}
-      <header className="bg-white dark:bg-gray-800 shadow-sm">
-        <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            AI Video Generator
-          </h1>
-        </div>
-      </header>
-
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Left Column - Video Generation Form */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-              <h2 className="text-2xl font-semibold mb-6">Create AI Videos from PDF</h2>
-              
-              {/* File Upload Section */}
-              <div className="mb-8">
-                <FileUpload onFileSelect={handleFileSelect} />
-              </div>
-
-              {/* YouTube Channel Section */}
-              <div className="mb-8">
-                <h3 className="text-xl font-semibold mb-4">YouTube Channel Settings</h3>
-                <YouTubeSettings onSettingsChange={handleSettingsChange} />
-              </div>
-
-              {/* Generate Button */}
-              <button
-                onClick={handleGenerate}
-                disabled={isGenerating}
-                className={`w-full py-3 px-6 rounded-lg font-semibold transition-colors ${
-                  isGenerating
-                    ? 'bg-blue-400 cursor-not-allowed'
-                    : 'bg-blue-600 hover:bg-blue-700'
-                } text-white`}
-              >
-                {isGenerating ? 'Generating...' : 'Generate & Publish Video'}
+      <div className="glass border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gradient">
+                Shoutout
+              </h1>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Create viral videos with AI
+              </p>
+            </div>
+            <div className="flex items-center gap-4">
+              <button className="btn-secondary">
+                <FiUpload className="w-4 h-4 mr-2" />
+                Upload
               </button>
+              <button className="btn-primary">
+                <BsLightning className="w-4 h-4 mr-2" />
+                Create
+              </button>
+              <button className="btn-accent">
+                <FiSettings className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
 
-              {/* Generated Video Link */}
-              {generatedVideoUrl && (
-                <div className="mt-4 p-4 bg-green-50 rounded-lg border border-green-200">
-                  <p className="text-green-700 font-medium">Video generated successfully!</p>
-                  <video
-                    className="w-full mt-4 rounded-lg"
-                    controls
-                    src={generatedVideoUrl}
-                  />
-                  <a
-                    href={generatedVideoUrl}
-                    download="generated-video.mp4"
-                    className="text-blue-600 hover:underline mt-2 block"
-                  >
-                    Download Video →
-                  </a>
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          {/* Left Column - Process Steps */}
+          <div className="lg:col-span-4">
+            <div className="glass-card p-6">
+              <div className="flex items-center gap-3 mb-6">
+                <BsRobot className="w-5 h-5 text-primary" />
+                <h2 className="text-lg font-semibold">Process Steps</h2>
+              </div>
+              <ProcessSteps
+                currentStep={currentStep}
+                steps={steps}
+                onStepComplete={(stepId) => console.log(`Step ${stepId} completed`)}
+              />
+            </div>
+          </div>
+
+          {/* Right Column - Current Step Content */}
+          <div className="lg:col-span-8">
+            <div className="glass-card p-6">
+              {currentStep === 'script' && (
+                <div>
+                  <div className="flex items-center gap-3 mb-6">
+                    <FiUpload className="w-5 h-5 text-primary" />
+                    <h2 className="text-lg font-semibold">Upload Document</h2>
+                  </div>
+                  <FileUpload onFileSelect={handleFileSelect} />
+                </div>
+              )}
+              
+              {currentStep === 'youtube' && (
+                <div>
+                  <div className="flex items-center gap-3 mb-6">
+                    <FiYoutube className="w-5 h-5 text-red-500" />
+                    <h2 className="text-lg font-semibold">YouTube Settings</h2>
+                  </div>
+                  <YouTubeSettings onSettingsChange={handleSettingsChange} />
                 </div>
               )}
             </div>
 
-            {/* Right Column - Video Gallery */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            {/* Video Gallery */}
+            <div className="mt-8">
+              <div className="flex items-center gap-3 mb-6">
+                <FiTrendingUp className="w-5 h-5 text-primary" />
+                <h2 className="text-lg font-semibold">Your Videos</h2>
+              </div>
               <VideoGallery />
             </div>
           </div>
-
-          {/* Features Section */}
-          <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow">
-              <h3 className="text-lg font-semibold mb-2">Upload PDF</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Upload your PDF document and let our AI analyze its content.
-              </p>
-            </div>
-
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow">
-              <h3 className="text-lg font-semibold mb-2">Generate Video</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Our AI creates engaging videos from your PDF content.
-              </p>
-            </div>
-
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow">
-              <h3 className="text-lg font-semibold mb-2">Publish</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Automatically publish your generated videos to YouTube.
-              </p>
-            </div>
-          </div>
         </div>
-      </main>
-    </div>
+      </div>
+    </main>
   );
 }

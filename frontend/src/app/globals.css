@@ -2,20 +2,228 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* Vibrant TikTok-inspired theme */
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
+    
+    /* Primary: Vibrant Pink */
+    --primary: 335 100% 60%;
+    --primary-foreground: 210 40% 98%;
+    
+    /* Secondary: Electric Blue */
+    --secondary: 199 89% 48%;
+    --secondary-foreground: 210 40% 98%;
+    
+    /* Accent: Neon Green */
+    --accent: 160 84% 39%;
+    --accent-foreground: 210 40% 98%;
+    
+    /* Card & UI Elements */
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    
+    /* Muted & Subtle Elements */
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    
+    /* Destructive Actions */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+    
+    /* UI Elements */
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 335 100% 60%;
+    --radius: 1rem;
+  }
+
+  .dark {
+    /* Dark mode with vibrant accents */
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
+    
+    /* Primary: Neon Pink */
+    --primary: 335 100% 65%;
+    --primary-foreground: 222 47% 11%;
+    
+    /* Secondary: Electric Blue */
+    --secondary: 199 89% 48%;
+    --secondary-foreground: 222 47% 11%;
+    
+    /* Accent: Neon Green */
+    --accent: 160 84% 39%;
+    --accent-foreground: 222 47% 11%;
+    
+    /* Card & UI Elements */
+    --card: 222 47% 13%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 47% 13%;
+    --popover-foreground: 210 40% 98%;
+    
+    /* Muted & Subtle Elements */
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    
+    /* Destructive Actions */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+    
+    /* UI Elements */
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 335 100% 65%;
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  * {
+    @apply border-white/10;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  /* Vibrant Gradients */
+  .gradient-primary {
+    @apply bg-gradient-to-r from-primary-light to-primary;
+  }
+
+  .gradient-secondary {
+    @apply bg-gradient-to-r from-secondary-light to-secondary;
+  }
+
+  .gradient-accent {
+    @apply bg-gradient-to-r from-accent-light to-accent;
+  }
+
+  /* Glassmorphism Effects */
+  .glass {
+    @apply bg-white/10 backdrop-blur-md border border-white/20;
+  }
+
+  .glass-card {
+    @apply glass rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300;
+  }
+
+  /* Custom Button Styles */
+  .btn {
+    @apply inline-flex items-center justify-center px-6 py-3 rounded-full font-medium 
+           transition-all duration-200 ease-in-out;
+  }
+
+  .btn-primary {
+    @apply btn gradient-primary text-white shadow-glow-primary
+           hover:opacity-90 hover:scale-105 hover:shadow-none
+           active:scale-95 active:opacity-100;
+  }
+
+  .btn-secondary {
+    @apply btn gradient-secondary text-white shadow-glow-secondary
+           hover:opacity-90 hover:scale-105 hover:shadow-none
+           active:scale-95 active:opacity-100;
+  }
+
+  .btn-accent {
+    @apply btn gradient-accent text-white shadow-glow-accent
+           hover:opacity-90 hover:scale-105 hover:shadow-none
+           active:scale-95 active:opacity-100;
+  }
+
+  /* Custom Card Styles */
+  .card {
+    @apply rounded-2xl p-6 transition-all duration-300;
+  }
+
+  .card-hover {
+    @apply hover:scale-[1.02] hover:shadow-xl;
+  }
+
+  /* Custom Input Styles */
+  .input {
+    @apply w-full px-6 py-3 rounded-xl border bg-white/5 backdrop-blur-sm 
+           focus:ring-2 focus:ring-primary/50 focus:border-primary 
+           transition-all duration-200 placeholder:text-gray-400;
+  }
+
+  /* Loading Effects */
+  .loading-dot {
+    @apply w-3 h-3 rounded-full bg-primary animate-bounce;
+  }
+
+  .loading-ring {
+    @apply w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin;
+  }
+
+  /* Progress Bar */
+  .progress-bar {
+    @apply h-2 bg-gray-200/20 dark:bg-gray-700/20 rounded-full overflow-hidden backdrop-blur-sm;
+  }
+
+  .progress-bar-fill {
+    @apply h-full gradient-primary transition-all duration-300 ease-out;
+  }
+}
+
+@layer utilities {
+  /* Custom Animations */
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  @keyframes pulse-ring {
+    0% { transform: scale(0.8); opacity: 0.5; }
+    100% { transform: scale(1.2); opacity: 0; }
+  }
+
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  .animate-float {
+    @apply motion-safe:animate-[float_3s_ease-in-out_infinite];
+  }
+
+  .animate-pulse-ring {
+    @apply motion-safe:animate-[pulse-ring_1.5s_cubic-bezier(0.24,0,0.38,1)_infinite];
+  }
+
+  .animate-shimmer {
+    @apply motion-safe:animate-[shimmer_2s_infinite];
+  }
+
+  /* Text Gradients */
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-accent;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    @apply w-1.5 h-1.5;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-gray-100/50 dark:bg-gray-800/50 backdrop-blur-sm;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-primary/50 rounded-full hover:bg-primary transition-colors duration-200;
+  }
+
+  /* Custom Focus Styles */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-primary/50 ring-offset-2 ring-offset-background;
+  }
+
+  /* Custom Selection Styles */
+  ::selection {
+    @apply bg-primary/20 text-primary;
+  }
 }
